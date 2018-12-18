@@ -1,0 +1,29 @@
+## Create a django based rest api for a library management system.
+
+    #### Cases to be covered
+    - Users can list, search, lend and submit books.
+    - Anyone(unauthenticated users) can search the list of available books by author name/s, book name, ISBN
+    - For a registered user, the search results also include books that are lended to him.
+    - For a librarian, the search results are from all available books along with their quantites.
+    - Books can be lended to registered users. A user can request for lending a available book and librarian has to approve it.
+    - A librarian can directly lend a book to any registered user.
+    - Only a user can submit a book upon which appropriate charge per book per day is calculated.
+    - Librarian can approve that the amount is received.
+    - Books can have mutiple authors.
+    - Add support for Sign in Google.
+
+
+    #### API Methods
+    -   Common login API for members and librarian (Also possible with Google Sign In)
+    -   Listing of books ( Anyone )
+        - Can be filtered by author first & last name, book title, ISBN
+        - Member can filter by available, lended now, lending history
+    -   Add a new book (Librarian)
+    -   Add a new user (Librarian)
+    -   Lend a book to member (Member, Librarian)
+    -   Approve lending request (Librarian)
+    -   Return a book (Member)
+    -   Approve Return (Librarian)
+
+    ### NOTE
+    - Assume users are preregistered.

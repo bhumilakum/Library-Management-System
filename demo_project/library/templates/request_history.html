@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+  <div class="col-6">
+    <div class="list-group">
+      <div href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">Books with me ({{ context.l.count }})</h5>
+        </div>
+        <p class="mb-1">
+          <ul class="list-group list-group-flush">
+            {% if context.l.count > 0 %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>Book Title</span>
+                <span>Issue Date</span>
+                <span>Action</span>
+              </li>
+            {% endif %}
+            {% for book in context.l %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a>
+                <span>{{ book.issue_date }}</span>
+                <span>Return</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </p>
+      </div>
+      <div href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-1">Book Requests - pending ({{ context.p.count }})</h5>
+        </div>
+        <p class="mb-1">
+          <ul class="list-group list-group-flush">
+            {% if context.p.count > 0 %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>Book Title</span>
+                <span>Request Date</span>
+                <span>Action</span>
+              </li>
+            {% endif %}
+            {% for book in context.p %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a>
+                <span>{{ book.req_date }}</span>
+                <span>Cancel</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </p>
+      </div>
+      <div href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">Book Requests - closed ({{ context.c.count }})</h5>
+        </div>
+        <p class="mb-1">
+          <ul class="list-group list-group-flush">
+            {% if context.c.count > 0 %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <span>Book Title</span>
+                <span>Return Date</span>
+                <span>Charge paid</span>
+              </li>
+            {% endif %}
+            {% for book in context.c %}
+              <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a>
+                <span>{{ book.return_date }}</span>
+              </li>
+            {% endfor %}
+          </ul>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
