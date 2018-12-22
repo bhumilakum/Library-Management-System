@@ -5,6 +5,7 @@ from . import forms
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import date
+from django.contrib import messages
 
 def index(request):
      return render(request, 'index.html')
@@ -26,7 +27,7 @@ def books(request):
     elif filter_key == 'isbn':
         context = Book.objects.filter(isbn = search_key)
     else:
-        context = Book.objects.all()
+        context = Book.objects.filter(title__contains = search_key)
 
     paginator = Paginator(context, 6)
     page = request.GET.get('page')
@@ -66,9 +67,9 @@ def book_filter(request):
     elif filter_key == 'status_l':
         context = Book.objects.filter(status = 'l', title__contains = search_key)
     else:
-        context = Book.objects.all()
+        context = Book.objects.filter(title__contains = search_key)
 
-    paginator = Paginator(context, 6)
+    paginator = Paginator(context, 4)
     page = request.GET.get('page')
 
     try:
@@ -87,37 +88,68 @@ def book_filter(request):
         {'value': 'status_a', 'name': 'Books Available'},
         {'value': 'status_l', 'name': 'Books Lent'}
     ]
-    return render(request, 'book_filter.html', {'context': context, 'filter_list': filter_list})
+
+    request_history = BookLendDetail.objects.filter(reader = request.user)
+    book_ids = []
+    for data in request_history:
+        if data.status in ['p', 'l', 'r']:
+            book_ids.append(data.book.id)
+
+    return render(request, 'book_filter.html', {'context': context, 'filter_list': filter_list, 'book_ids': book_ids})
 
 
 @login_required
 def make_request(request):
-    data = Book.objects.filter(status = 'a')
+    book_id = request.GET.get('book_id')
 
-    if request.method == 'POST':
-        req_book_title = request.POST.get('book_list')
+    book_detail = Book.objects.get(id = book_id)
+    data = BookLendDetail(book = book_detail, reader = request.user, request_date = date.today(), charge = 0)
+    data.save()
 
-        book_detail = Book.objects.get(title=req_book_title)
-        data = BookLendDetail(book = book_detail, reader = request.user, req_date = date.today(), charge = 0)
-        data.save()
+    # messages.add_message(request, messages.INFO, 'Your book request has been submitted.')
+    return render(request, 'make_request.html', {})
 
-        return render(request, 'request_history.html')
-
-
-    return render(request, 'make_request.html', {'context': data})
 
 @login_required
 def request_history(request):
-    req_pending = BookLendDetail.objects.filter(reader = request.user, status = 'p')
-    req_close =  BookLendDetail.objects.filter(reader = request.user, status = 'c')
-    req_lending =  BookLendDetail.objects.filter(reader = request.user, status = 'l')
-
+    req_pending = BookLendDetail.objects.filter(reader = request.user, status = 'p').order_by("-request_date")
+    req_close =  BookLendDetail.objects.filter(reader = request.user, status = 'c').order_by("-close_date")
+    req_lending =  BookLendDetail.objects.filter(reader = request.user, status = 'l').order_by("-lent_date")
+    req_return = BookLendDetail.objects.filter(reader = request.user, status = 'r').order_by("-return_date")
+    req_rejected = BookLendDetail.objects.filter(reader = request.user, status = 'n').order_by("-request_date")
     context = {
         'p': req_pending,
         'c': req_close,
-        'l': req_lending
+        'l': req_lending,
+        'r': req_return,
+        'n': req_rejected
     }
     return render(request, 'request_history.html', {'context' : context})
+
+@login_required
+def cancel_request(request):
+    request_id = request.GET.get('request_id')
+
+    BookLendDetail.objects.filter(id=request_id).delete()
+
+    return render(request, 'request_history.html')
+
+@login_required
+def return_book(request):
+    request_id = request.GET.get('request_id')
+
+    request_data = BookLendDetail.objects.get(id=request_id)
+    charge_day = 20
+    today_date = date.today()
+    day = today_date - request_data.lent_date
+    charge = (day.days + 1) * charge_day
+    
+    request_data.return_date = today_date
+    request_data.status = 'r'
+    request_data.charge = charge
+    request_data.save()
+
+    return render(request, 'request_history.html')
 
 @login_required
 def manage_books(request):

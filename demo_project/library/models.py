@@ -20,6 +20,7 @@ class Author(models.Model):
     def __str__(self):
         return f'{self.firstname} {self.lastname}'
 
+
 class Category(models.Model):
     """ This class represents the category model for book category.
         e.g. social, comedy etc.
@@ -67,13 +68,14 @@ class BookLendDetail(models.Model):
     """ This class represents the actual details of the process of book lending.
         User can request to lend a book and librarial can grant it to the user.
     """
-    book_status = (('p', 'pending'), ('l', 'lent'), ('c', 'closed'), ('r', 'rejected'))
+    book_status = (('p', 'pending'), ('l', 'lent'), ('r', 'returned'), ('c', 'closed'), ('n', 'rejected'))
 
     book = models.ForeignKey(Book, on_delete=models.SET_NULL, null=True)
     reader = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     request_date = models.DateField(null=True, blank=True)
     lent_date = models.DateField(null=True, blank=True)
     return_date = models.DateField(null=True, blank=True)
+    close_date = models.DateField(null=True, blank=True)
     charge = models.IntegerField()
     status = models.CharField(max_length=1, choices = book_status, blank = True, default = 'p')
 

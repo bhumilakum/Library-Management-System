@@ -7,6 +7,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <!-- <script type="text/javascript" src="{% static 'js/main.js' %}"></script> -->
 </head>
 <body>
   <div class="container-fluid">
@@ -28,7 +31,7 @@
             <nav  class="navbar navbar-user">
               <a class="nav-link navbar-user" href="{% url 'book_filter' %}">Books</a>
               <a class="nav-link navbar-user" href="{% url 'request_history' %}">My history</a>
-              <!-- <a class="nav-link navbar-user" href="{% url 'make_request' %}">Make Book Lend Request</a> -->
+              <!-- <a class="nav-link navbar-user" href="">Make Book Lend Request</a> -->
             </nav>
           {% else %}
             <nav  class="navbar navbar-user">
@@ -47,7 +50,7 @@
 
         {% endblock%}
 
-        <br><br>
+        <br>
         {% block content %} {% endblock %}
   </div>
 </body>
