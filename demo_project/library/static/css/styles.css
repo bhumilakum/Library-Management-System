@@ -31,3 +31,9 @@
 .t_head1, .t_head2, .t_head3, .t_head4, .t_head5 {
     cursor: pointer;
 }
+
+.index-image {
+    height: auto;
+    width: 100%;
+    padding-bottom: 20px;
+}

@@ -18,9 +18,9 @@
           <h1 class="display-5"><a class="title-head" href="{% url 'index' %}">Library Management System</a></h1>
           <!-- <a class="btn btn-primary btn-lg" href="#" role="button">Login</a> -->
           {% if user.is_authenticated %}
-            <a class="btn btn-outline-info btn-lg" href="{% url 'logout'%}?next={{request.path}}">Logout ({{ user.get_username }})</a>
+            <a class="btn btn-outline-info btn-lg" href="{% url 'logout'%}">Logout ({{ user.get_username }})</a>
           {% else %}
-            <a class="btn btn-outline-info btn-lg" href="{% url 'login'%}?next={{request.path}}">Login</a>
+            <a class="btn btn-outline-info btn-lg" href="{% url 'login'%}">Login</a>
           {% endif %}
         </div>
         {% endblock %}
