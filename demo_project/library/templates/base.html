@@ -36,10 +36,9 @@
           {% else %}
             <nav  class="navbar navbar-user">
               <a class="nav-link navbar-user" href="{% url 'manage_books' %}">Search</a>
-              <a class="nav-link navbar-user" href="#">Book Requests</a>
-              <a class="nav-link navbar-user" href="#">Lend Book</a>
-              <a class="nav-link navbar-user" href="#">Add New Book</a>
-              <a class="nav-link navbar-user" href="#">Add New User</a>
+              <a class="nav-link navbar-user" href="{% url 'manage_requests' %}">Book Requests</a>
+              <a class="nav-link navbar-user" href="{% url 'add_book' %}">Add New Book</a>
+              <!-- <a class="nav-link navbar-user" href="">Add New User</a> -->
             </nav>
           {% endif %}
         {% else %}

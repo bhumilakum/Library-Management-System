@@ -12,4 +12,12 @@ urlpatterns = [
     path('books/cancel_request', views.cancel_request, name='cancel_request'),
     path('books/return_book', views.return_book, name='return_book'),
     path('books/manage_books', views.manage_books, name='manage_books'),
+    path('user/create/', views.UserCreate.as_view(), name='create_user'),
+    path('book/add/', views.BookCreate.as_view(), name='add_book'),
+    path('books/add_quantity/<int:pk>', views.add_quantity, name='add_quantity'),
+    path('books/lend_book/<int:pk>', views.lend_book, name='lend_book'),
+    path('books/manage_requests', views.manage_requests, name='manage_requests'),
+    path('books/confirm_lend_request', views.confirm_lend_request, name='confirm_lend_request'),
+    path('books/reject_lend_request', views.reject_lend_request, name='reject_lend_request'),
+    path('books/close_request', views.close_request, name='close_request'),
 ]

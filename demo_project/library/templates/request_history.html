@@ -160,7 +160,7 @@
     {% for book in context.n %}
     <tr>
       <td><a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a></td>
-      <td>{{ book.return_date }}</td>
+      <td>{{ book.close_date }}</td>
       <td></td>
     </tr>
     {% endfor %}

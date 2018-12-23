@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% block content %}
+
+<script type="text/javascript">
+    function show_data(head_title){
+      $(".t_body"+head_title).toggle();
+    }
+
+    function lend_book(request_data)
+    {
+        request_id = request_data.value;
+        $.ajax({
+        url: "{% url 'confirm_lend_request' %}",
+        method: 'GET',
+        data: {
+          'request_id': request_id
+        },
+        success: function () {
+          //window.location.reload();
+        },
+        complete: function () {
+          $("#"+ request_id).remove();
+          document.getElementById("flash_msg_lent").style.display = "inherit";
+          var c = $("#lcount").text();
+          $("#lcount").text(c - 1);
+        }
+      });
+    }
+
+    function reject_request(request_data)
+    {
+        request_id = request_data.value;
+        $.ajax({
+        url: "{% url 'reject_lend_request' %}",
+        method: 'GET',
+        data: {
+          'request_id': request_id
+        },
+        success: function () {
+          //window.location.reload();
+        },
+        complete: function () {
+          $("#"+ request_id).remove();
+          document.getElementById("flash_msg_reject").style.display = "inherit";
+          var c = $("#lcount").text();
+          $("#lcount").text(c - 1);
+        }
+      });
+    }
+
+    function close_request(request_data)
+    {
+        request_id = request_data.value;
+        $.ajax({
+        url: "{% url 'close_request' %}",
+        method: 'GET',
+        data: {
+          'request_id': request_id
+        },
+        success: function () {
+          //window.location.reload();
+        },
+        complete: function () {
+          $("#"+ request_id).remove();
+          document.getElementById("flash_msg_close").style.display = "inherit";
+          var c = $("#rcount").text();
+          $("#rcount").text(c - 1);
+        }
+      });
+    }
+</script>
+
+<div class="alert alert-success" role="alert" id="flash_msg_lent" style="display: none;">
+    The book has been lent to the reader.
+</div>
+
+<div class="alert alert-success" role="alert" id="flash_msg_reject" style="display: none;">
+    The book request has been rejected.
+</div>
+
+<div class="alert alert-success" role="alert" id="flash_msg_close" style="display: none;">
+    The book request has been closed.
+</div>
+
+<table class="table">
+    <thead>
+      <tr class="t_head1" onclick="show_data(1);">
+        <th colspan="6">Book Lend Requests (<span id="lcount">{{ context.lend_request.count }}</span>)</th>
+      </tr>
+      {% if context.lend_request.count > 0 %}
+      <tr class="t_body1">
+        <th scope="col">Book Title</th>
+        <th scope="col">Available copy</th>
+        <th scope="col">Reader</th>
+        <th scope="col">Request date</th>
+        <th scope="col">Action</th>
+        <th></th>
+      </tr>
+      {% endif %}
+    </thead>
+    <tbody class="t_body1">
+      {% for req in context.lend_request %}
+      <tr id="{{ req.id }}">
+        <td><a href="{{ req.book.get_absolute_url  }}">{{ req.book.title }}</a></td>
+        <td>{{ req.book.quantity }}</td>
+        <td>{{ req.reader.username }}</td>
+        <td>{{ req.request_date }}</td>
+        <td>
+            {% if req.book.quantity > 0 %}
+            <button type="button" name="" class="btn btn-outline-info" value="{{req.id}}" onclick="lend_book(this);">Lend Book</button>
+            {% endif %}
+            <button type="button" name="" class="btn btn-outline-info" value="{{req.id}}" onclick="reject_request(this);">Reject Request</button>
+        </td>
+        <td></td>
+    </tr>
+      {% endfor %}
+    </tbody>
+    <thead>
+      <tr class="t_head2" onclick="show_data(2);">
+        <th colspan="6">Book Return Requests(<span id="rcount">{{ context.return_request.count }}</span>)</th>
+      </tr>
+      {% if context.return_request.count > 0 %}
+      <tr class="t_body2">
+        <th scope="col">Book Title</th>
+        <th scope="col">Lent Date</th>
+        <th scope="col">Return Date</th>
+        <th scope="col">Charge</th>
+        <th scope="col">Reader</th>
+        <th scope="col">Action</th>
+      </tr>
+      {% endif %}
+    </thead>
+    <tbody class="t_body2">
+      {% for req in context.return_request %}
+      <tr id="{{ req.id }}">
+        <td><a href="{{ req.book.get_absolute_url  }}">{{ req.book.title }}</a></td>
+        <td>{{ req.lent_date }}</td>
+        <td>{{ req.return_date }}</td>
+        <td>{{ req.charge }}</td>
+        <td>{{ req.reader.username }}</td>
+        <td><button type="button" name="" class="btn btn-outline-info" value="{{req.id}}" onclick="close_request(this);">Close Request</button></td>
+      </tr>
+      {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

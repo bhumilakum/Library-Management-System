@@ -4,6 +4,7 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from datetime import date
+from django.core.validators import RegexValidator
 
 class Author(models.Model):
     """ This class represents the Model for an author of the book.
@@ -34,14 +35,15 @@ class Category(models.Model):
 class Book(models.Model):
     """ This is the class representing the model for books.
     """
+    numeric = RegexValidator(r'^[0-9]*$', 'Only  numeric characters are allowed.')
     book_status = (('a', 'available'), ('l', 'lended'))
 
     title = models.CharField(max_length=250)
-    isbn = models.CharField('ISBN', max_length=13, help_text='13 Character ISBN number')
+    isbn = models.CharField('ISBN', max_length=13, help_text='13 Character ISBN number', validators=[numeric])
     description = models.TextField(max_length=500)
     price = models.IntegerField()
     total_quantity = models.IntegerField()
-    quantity = models.IntegerField()
+    quantity = models.IntegerField(default=1)
     status = models.CharField(max_length=1, choices = book_status, blank = True, default = 'a')
     author = models.ManyToManyField(Author)
     category = models.ManyToManyField(Category)
@@ -49,6 +51,10 @@ class Book(models.Model):
     def __str__(self):
         return self.title
 
+    # def save(self, *args, **kwargs):
+    #     if self.pk is None:
+    #         self.quantity = self.total_quantity
+        
     def get_absolute_url(self):
         return reverse('book_detail', args=[str(self.id)])
 

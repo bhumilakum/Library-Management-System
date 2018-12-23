@@ -1,17 +1,30 @@
 from django.shortcuts import render
-from library.models import Book, Category, Author, BookLendDetail
+from library.models import Book, Category, Author, BookLendDetail, User
 from django.views import generic
 from . import forms
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import date
 from django.contrib import messages
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
+from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
 
 def index(request):
      return render(request, 'index.html')
 
 class BookDetailView(generic.DetailView):
     model = Book
+
+class UserCreate(CreateView):
+    model = User
+    fields = ['first_name', 'last_name', 'username', 'password', 'email']
+    success_url = reverse_lazy('manage_books')
+
+class BookCreate(CreateView):
+    model = Book
+    fields = ['title', 'isbn', 'description', 'price', 'total_quantity', 'author', 'category']
 
 def books(request):
     context = []
@@ -156,7 +169,7 @@ def manage_books(request):
     context = []
     search_key = str(request.GET.get('search_key', "")).strip()
     filter_key = str(request.GET.get('filter_key', "")).strip()
-
+    
     if filter_key == 'firstname':
         context = Book.objects.filter(author__firstname__contains = search_key)
     elif filter_key == 'lastname':
@@ -172,7 +185,7 @@ def manage_books(request):
     else:
         context = Book.objects.filter(title__contains = search_key)
 
-    paginator = Paginator(context, 6)
+    paginator = Paginator(context, 5)
     page = request.GET.get('page')
 
     try:
@@ -193,3 +206,90 @@ def manage_books(request):
     ]
 
     return render(request, 'manage_books.html', {'context' : context, 'filter_list': filter_list})
+
+@login_required
+def add_quantity(request, pk):
+
+    book_data = Book.objects.get(id = pk)
+    message = ""
+    if request.method == "POST":
+        if request.POST.get('quantity'):
+            book_data.total_quantity = int(book_data.total_quantity) + int(request.POST.get('quantity'))
+            book_data.save()
+            if int(request.POST.get('quantity')) == 1:
+                c = "copy"
+                h = "has"
+            else:
+                c = "copies"
+                h = "have"
+            message = request.POST.get('quantity') + " " + c + " of the book (" + book_data.title + ") " + h + " been added."
+            messages.add_message(request, messages.INFO, message)
+            return redirect('/library/books/manage_books')
+
+    return render(request, 'add_quantity.html', { 'book' : book_data , 'message': message } )
+
+@login_required
+def lend_book(request, pk):
+    book_data = Book.objects.get(id = pk)
+    readers = User.objects.filter(groups__name = 'Readers')
+
+    if request.method == "POST":
+        reader_id = request.POST.get('reader')
+        reader = User.objects.get(id=reader_id)
+        req = BookLendDetail(book = book_data, reader = reader, lent_date = date.today(), status = 'l', charge = 0)
+        req.save()
+        if book_data.quantity == 1:
+            book_data.status = 'l'
+        book_data.quantity = book_data.quantity - 1
+        book_data.save()
+        message = "The book (" + book_data.title + ") has been lent to the reader (" + reader.username + ")"
+        messages.add_message(request, messages.INFO, message)
+        return redirect('/library/books/manage_books')
+
+    return render(request, 'lend_book.html', { 'book' : book_data, 'readers' : readers })
+
+@login_required
+def manage_requests(request):
+
+    lend_request_data = BookLendDetail.objects.filter(status = 'p').order_by("-request_date")
+    return_request_data = BookLendDetail.objects.filter(status = 'r').order_by("-request_date")
+
+    context = {
+        'lend_request' : lend_request_data,
+        'return_request' : return_request_data
+    }
+    return render(request, 'manage_requests.html', {'context':context})
+
+@login_required
+def confirm_lend_request(request):
+
+    request_id = request.GET.get('request_id')
+    request_data = BookLendDetail.objects.get(id = request_id)
+    request_data.lent_date = date.today()
+    request_data.status = 'l'
+    if request_data.book.quantity == 1:
+        request_data.book.status = 'l'
+    request_data.book.quantity = request_data.book.quantity - 1
+    request_data.save()
+
+    return render(request, 'manage_requests')
+
+@login_required
+def reject_lend_request(request):
+    request_id = request.GET.get('request_id')
+    request_data = BookLendDetail.objects.get(id = request_id)
+    request_data.close_date = date.today()
+    request_data.status = 'n'
+    request_data.save()
+
+    return render(request, 'manage_requests')
+
+@login_required
+def close_request(request):
+    request_id = request.GET.get('request_id')
+    request_data = BookLendDetail.objects.get(id = request_id)
+    request_data.close_date = date.today()
+    request_data.status = 'c'
+    request_data.save()
+
+    return render(request, 'manage_requests')

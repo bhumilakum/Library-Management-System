@@ -1,6 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script type="text/javascript">
+  function callme(btn) {
+    var book_id = btn.value;
+    $.ajax({
+      url: "{% url 'make_request' %}",
+      method: 'GET',
+      data: {
+        'book_id': book_id
+      },
+      success: function () {
+        // alert("request made!");
+      },
+      complete: function () {
+        $('#btn-lend' + book_id).prop('disabled', true);
+        $('#btn-lend' + book_id).text('Already requested');
+        // $('#flash_msg').style.display = "inherit";
+        document.getElementById("flash_msg").style.display = "inherit";
+      }
+    });
+  }
+</script>
+
+  
+{% if messages %}
+  {% for message in messages %}
+    <p class="alert alert-success">{{ message }}</p>
+  {% endfor %}
+{% endif %}
 
   <form class="" action="" method="GET">
     <div class="form-row align-items-center">
@@ -37,6 +65,7 @@
             <th scope="col">#</th>
             <th scope="col">Book Title</th>
             <th scope="col">Author</th>
+            <th scope="col">Total Quantity</th>
             <th scope="col">Available Quantity</th>
             <th scope="col">Action</th>
           </tr>
@@ -47,8 +76,14 @@
           <th scope="col">{{ forloop.counter0|add:context.start_index }}</th>
           <td><a href="{{ book.get_absolute_url }}">{{ book.title }}</a></td>
           <td>{% for author in book.author.all %} {{ author }}{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+          <td>{{ book.total_quantity }}</td>
           <td>{{ book.quantity }}</td>
-          <td>Lend Book</td>
+          <td>
+            {% if book.quantity > 0 %}
+            <a  href="{% url 'lend_book' book.id %}" name="btn-lend{{ book.id }}" class="btn btn-outline-info">Lend Book</a>
+            {% endif %}
+            <a href="{% url 'add_quantity' book.id %}" name="btn-copy{{ book.id }}" class="btn btn-outline-info">Add Copy</a>
+          </td>
         </tr>
         {% endfor %}
       </tbody>
