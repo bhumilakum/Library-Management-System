@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="card">
+<div class="card mt-4">
   <div class="card-header">
     <h4>{{ book.title }}</h4>
   </div>
@@ -11,7 +11,7 @@
     <p class="card-text"><strong>ISBN: </strong>{{ book.isbn }}</p>
     <p class="card-text"><strong>Category:</strong> {% for category in book.category.all %} {{ category }}{% if not forloop.last %}, {% endif %}{% endfor %}</p>
     <!-- <a href="#" class="btn btn-outline-info mb-2">Make Lend Request</a> -->
-    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-info mb-2">Back</a>
+    <a href="{{request.META.HTTP_REFERER}}" class="btn btn-outline-primary mb-2">Back</a>
   </div>
 </div>
 {% endblock %}

@@ -206,7 +206,7 @@ def manage_requests(request):
 @login_required
 def manage_requests_return(request):
 
-    return_request_data = BookLendDetail.objects.filter(status = 'r').order_by("-request_date")
+    return_request_data = BookLendDetail.objects.filter(status = 'r').order_by("-return_date")
     context = manage_requests_count()
 
     paginator = Paginator(return_request_data, 10)

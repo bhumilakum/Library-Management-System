@@ -1,22 +1,22 @@
 {% extends "base.html" %} {% block content %}
 
 <ul class="nav nav-tabs">
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'manage_requests' %}">Lend Requests <span id="lcount" class="badge badge-primary badge-pill">{{ context.p }}</span></a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'manage_requests_return' %}">Return Requests <span id="rcount" class="badge badge-primary badge-pill">{{ context.r }}</span></a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'manage_requests_lent' %}">Book Lent <span id="" class="badge badge-primary badge-pill">{{ context.l }}</span></a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link active" href="{% url 'manage_requests_rejected' %}">Rejected Requests <span id="" class="badge badge-primary badge-pill">{{ context.n }}</span></a>
-    </li>
-    <li class="nav-item">
-        <a class="nav-link" href="{% url 'manage_requests_close' %}">Close Requests <span id="" class="badge badge-primary badge-pill">{{ context.c }}</span></a>
-    </li>
-  </ul>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'manage_requests' %}">New Requests <span id="lcount" class="badge badge-primary badge-pill">{{ context.p  }}</span></a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'manage_requests_return' %}">Return Requests <span id="rcount" class="badge badge-primary badge-pill">{{ context.r }}</span></a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="{% url 'manage_requests_lent' %}">Books Lent <span id="" class="badge badge-primary badge-pill">{{ context.l }}</span></a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link active" href="{% url 'manage_requests_rejected' %}">Rejected Requests <span id="" class="badge badge-primary badge-pill">{{ context.n }}</span></a>
+  </li>
+  <li class="nav-item">
+      <a class="nav-link" href="{% url 'manage_requests_close' %}">Closed Requests <span id="" class="badge badge-primary badge-pill">{{ context.c }}</span></a>
+  </li>
+</ul>
 
 <table class="table req-table">
   <thead>

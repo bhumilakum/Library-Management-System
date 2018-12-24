@@ -36,40 +36,38 @@
   {% endfor %}
 {% endif %}
 
-  <form class="" action="" method="GET">
+  <form class="mt-4 mb-5" action="" method="GET">
     <div class="form-row align-items-center">
       <div class="col-auto">
-        <div class="input-group mb-2">
-          <input type="text" class="form-control" id="search_key" placeholder="Search key" value="{{ request.GET.search_key }}" name="search_key">
+        <div class="input-group">
+          <input type="text" class="form-control form-control-lg" id="search_key" placeholder="Search book" value="{{ request.GET.search_key }}" name="search_key">
         </div>
       </div>
       <div class="col-auto">
        <label class="sr-only" for="filter_key">Filter</label>
-       <select class="form-control mb-2" name="filter_key">
+       <select class="form-control form-control-lg" name="filter_key">
          {% for i in filter_list %}
             <option value="{{ i.value }}" {% if i.value == request.GET.filter_key %}selected{% endif %}>{{ i.name }}</option>
          {% endfor %}
        </select>
       </div>
       <div class="col-auto">
-        <button type="submit" class="btn btn-outline-info mb-2">Search</button>
+        <button type="submit" class="btn btn-primary btn-lg">Search</button>
       </div>
     </div>
     {% csrf_token %}
   </form>
 
   {% if context %}
-    <br>
-    <h5>Books match:</h5>
     <table class="table">
-      <thead>
+      <thead class="thead-light">
           <tr>
             <th scope="col">#</th>
             <th scope="col">Book Title</th>
-            <th scope="col">Author</th>
-            <th scope="col">Total Quantity</th>
+            <th scope="col">Author(s)</th>
+            <th scope="col">Total Books</th>
             {% if user.is_authenticated %}
-            <th scope="col">Available Quantity</th>
+            <th scope="col">Available Books</th>
             <th scope="col">Action</th>
             {% endif %}
           </tr>
@@ -88,22 +86,22 @@
             {% if user.groups.all.0.name  == 'Readers' %}
               <td>
                 {% if book.status == 'l' %}
-                <button type="button" name="btn-lend{{book.id}}" id="btn-lend{{book.id}}" class="btn btn-outline-info" value="{{book.id}}"
+                <button type="button" name="btn-lend{{book.id}}" id="btn-lend{{book.id}}" class="btn btn-primary" value="{{book.id}}"
                   disabled>Not available</button>
                 {% elif book.id in book_ids %}
-                <button type="button" name="btn-lend{{book.id}}" id="btn-lend{{book.id}}" class="btn btn-outline-info" value="{{book.id}}"
+                <button type="button" name="btn-lend{{book.id}}" id="btn-lend{{book.id}}" class="btn btn-primary" value="{{book.id}}"
                   disabled>Already requested</button>
                 {% else %}
-                <button type="button" name="btn-lend{{book.id}}" id="btn-lend{{book.id}}" class="btn btn-outline-info" value="{{book.id}}"
+                <button type="button" name="btn-lend{{book.id}}" id="btn-lend{{book.id}}" class="btn btn-primary" value="{{book.id}}"
                   onclick="callme(this);">Make lend request</button>
                 {% endif %}
               </td>
             {% else %}
               <td>
                 {% if book.quantity > 0 %}
-                <a  href="{% url 'lend_book' book.id %}" name="btn-lend{{ book.id }}" class="btn btn-outline-info">Lend Book</a>
+                <a  href="{% url 'lend_book' book.id %}" name="btn-lend{{ book.id }}" class="btn btn-primary">Lend Book</a>
                 {% endif %}
-                <a href="{% url 'add_quantity' book.id %}" name="btn-copy{{ book.id }}" class="btn btn-outline-info">Add Copy</a>
+                <a href="{% url 'add_quantity' book.id %}" name="btn-copy{{ book.id }}" class="btn btn-primary">Add Copy</a>
               </td>
             {% endif %}
           {% endif %}

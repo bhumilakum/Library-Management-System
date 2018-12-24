@@ -16,6 +16,7 @@ This the demo project of the library management system.  Here the user can list,
     ```cmd
         pip install pillow
     ```
+* To use Google Signin into this application, paste your Client ID and Client Secret into ```settings.py``` file. To grab that, follow the instructions mentioned in this page ( [https://developers.google.com/identity/protocols/OAuth2WebServer](https://developers.google.com/identity/protocols/OAuth2WebServer)).
 
 ## How to run project
 

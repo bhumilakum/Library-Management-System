@@ -144,5 +144,5 @@ AUTHENTICATION_BACKENDS = (
  'django.contrib.auth.backends.ModelBackend',
 )
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY ='586948758053-s0bj8j2jr9burs9mvn2c3m2u8sa8dnov.apps.googleusercontent.com'  #Paste CLient Key
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'okK6SZ4H9E-3QV7MEy-CoHYh' #Paste Secret Key
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = ''  #Paste Client ID
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '' #Paste Client Secret
