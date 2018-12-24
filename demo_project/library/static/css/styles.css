@@ -1,3 +1,12 @@
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body>.container {
+    padding: 80px 15px 0;
+}
+
 .header-main {
     background-color: #1d2939;
     color: #5bc0de;
@@ -24,16 +33,20 @@
     color: white;
 }
 
-.t_body1, .t_body2, .t_body3, .t_body4, .t_body5 {
-    display: none;
-}
-
-.t_head1, .t_head2, .t_head3, .t_head4, .t_head5 {
-    cursor: pointer;
-}
-
 .index-image {
     height: auto;
     width: 100%;
     padding-bottom: 20px;
+}
+
+.req-table {
+    margin-top: 20px;
+}
+
+.req_body1,
+.req_body2,
+.req_body3,
+.req_body4,
+.req_body5 {
+    display: none;
 }

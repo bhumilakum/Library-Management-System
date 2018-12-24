@@ -132,8 +132,8 @@ STATICFILES_DIRS = [
 
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
 # LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = ''
-LOGOUT_REDIRECT_URL = ''
+LOGIN_REDIRECT_URL = '/library/'
+LOGOUT_REDIRECT_URL = '/library/'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 

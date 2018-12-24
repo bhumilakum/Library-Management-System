@@ -36,7 +36,7 @@ class Book(models.Model):
     """ This is the class representing the model for books.
     """
     numeric = RegexValidator(r'^[0-9]*$', 'Only  numeric characters are allowed.')
-    book_status = (('a', 'available'), ('l', 'lended'))
+    book_status = (('a', 'available'), ('l', 'lent'))
 
     title = models.CharField(max_length=250)
     isbn = models.CharField('ISBN', max_length=13, help_text='13 Character ISBN number', validators=[numeric])

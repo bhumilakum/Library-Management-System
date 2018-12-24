@@ -1,14 +1,13 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 <script type="text/javascript">
-    function show_data(head_title){
-      $(".t_body"+head_title).toggle();
-    }
+  function show_data(head_title) {
+    $(".req_body" + head_title).toggle();
+  }
 
-    function cancel_request(request_data)
-    {
-      request_id = request_data.value;
+  function cancel_request(request_data) {
+    request_id = request_data.value;
+    var ans = confirm("Are you sure you want to cancel this request?");
+    if (ans == true) {
       $.ajax({
         url: "{% url 'cancel_request' %}",
         method: 'GET',
@@ -19,17 +18,19 @@
           //window.location.reload();
         },
         complete: function () {
-          $("#"+ request_id).remove();
+          $("#" + request_id).remove();
           document.getElementById("flash_msg_cancel").style.display = "inherit";
           var t = $("#lent_req").text();
           $("#lent_req").text(t - 1);
         }
       });
     }
+  }
 
-    function return_book(request_data)
-    {
-      request_id = request_data.value;
+  function return_book(request_data) {
+    request_id = request_data.value;
+    var ans = confirm("Are you sure you want to return this book?");
+    if (ans == true) {
       $.ajax({
         url: "{% url 'return_book' %}",
         method: 'GET',
@@ -40,7 +41,7 @@
           //window.location.reload();
         },
         complete: function () {
-          $("#"+ request_id).remove();
+          $("#" + request_id).remove();
           document.getElementById("flash_msg_return").style.display = "inherit";
           var c = $("#book_count").text();
           $("#book_count").text(c - 1);
@@ -49,6 +50,7 @@
         }
       });
     }
+  }
 </script>
 
 <div class="alert alert-success" role="alert" id="flash_msg_cancel" style="display: none;">
@@ -56,68 +58,96 @@
 </div>
 
 <div class="alert alert-success" role="alert" id="flash_msg_return" style="display: none;">
-  Your book request has been canceled!
+  Your book return request has been sent.
 </div>
 
 <table class="table">
   <thead>
     <tr class="t_head1" onclick="show_data(1);">
-      <th colspan="3">Books with me (<span id="book_count">{{ context.l.count }}</span>)</th>
+      <th colspan="6">Books with me
+        <span class="badge badge-primary badge-pill" id="book_count">{{ context.l.count }}</span>
+      </th>
     </tr>
     {% if context.l.count > 0 %}
-    <tr class="t_body1">
+    <tr class="req_body1">
       <th scope="col">Book Title</th>
+      <th scope="col">Request Date</th>
       <th scope="col">Issue Date</th>
       <th scope="col">Action</th>
+      <th colspan="2"></th>
     </tr>
     {% endif %}
   </thead>
-  <tbody class="t_body1">
+  <tbody class="req_body1">
     {% for book in context.l %}
     <tr id="{{ book.id }}">
-      <td><a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a></td>
+      <td>
+        <a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a>
+      </td>
+      <td>{{ book.request_date }}</td>
       <td>{{ book.lent_date }}</td>
-      <td><button type="button" name="return_book" class="btn btn-outline-info" value="{{book.id}}" onclick="return_book(this);">Return Book</button></td>
+      <td>
+        <button type="button" name="return_book" class="btn btn-outline-info" value="{{book.id}}" onclick="return_book(this);">Return Book</button>
+      </td>
+      <td colspan="2"></td>
     </tr>
     {% endfor %}
   </tbody>
   <thead>
     <tr class="t_head2" onclick="show_data(2);">
-      <th colspan="3">Book Lend Requests - pending (<span id="lent_req">{{ context.p.count }}</span>)</th>
+      <th colspan="6">Book Requests - pending
+        <span id="lent_req" class="badge badge-primary badge-pill">{{ context.p.count }}</span>
+      </th>
     </tr>
     {% if context.p.count > 0 %}
-    <tr class="t_body2">
+    <tr class="req_body2">
       <th scope="col">Book Title</th>
       <th scope="col">Request Date</th>
       <th scope="col">Action</th>
+      <th colspan="3"></th>
     </tr>
     {% endif %}
   </thead>
-  <tbody class="t_body2">
+  <tbody class="req_body2">
     {% for book in context.p %}
     <tr id="{{ book.id }}">
-      <td><a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a></td>
+      <td>
+        <a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a>
+      </td>
       <td>{{ book.request_date }}</td>
-      <td><button type="button" name="cancel_req" class="btn btn-outline-info" value="{{book.id}}" onclick="cancel_request(this);">Cancel request</button></td>
+      <td>
+        <button type="button" name="cancel_req" class="btn btn-outline-info" value="{{book.id}}" onclick="cancel_request(this);">Cancel request</button>
+      </td>
+      <td colspan="3"></td>
     </tr>
     {% endfor %}
   </tbody>
   <thead>
     <tr class="t_head3" onclick="show_data(3);">
-      <th colspan="3">Book Requests - closed ({{ context.c.count }})</th>
+      <th colspan="6">Book Requests - closed
+        <span class="badge badge-primary badge-pill">{{ context.c.count }}</span>
+      </th>
     </tr>
     {% if context.c.count > 0 %}
-    <tr class="t_body3">
+    <tr class="req_body3">
       <th scope="col">Book Title</th>
-      <th scope="col">Date</th>
+      <th scope="col">Request Date</th>
+      <th scope="col">Lent Date</th>
+      <th scope="col">Return Date</th>
+      <th scope="col">Close Date</th>
       <th scope="col">Charge paid</th>
     </tr>
     {% endif %}
   </thead>
-  <tbody class="t_body3">
+  <tbody class="req_body3">
     {% for book in context.c %}
     <tr>
-      <td><a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a></td>
+      <td>
+        <a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a>
+      </td>
+      <td>{{ book.request_date }}</td>
+      <td>{{ book.lent_date }}</td>
+      <td>{{ book.return_date }}</td>
       <td>{{ book.close_date }}</td>
       <td>{{ book.charge }}</td>
     </tr>
@@ -125,43 +155,57 @@
   </tbody>
   <thead>
     <tr class="t_head4" onclick="show_data(4);">
-      <th colspan="3">Book Returned (<span id="book_returned">{{ context.r.count }}</span>)</th>
+      <th colspan="6">Book Returned
+        <span id="book_returned" class="badge badge-primary badge-pill">{{ context.r.count }}</span>
+      </th>
     </tr>
     {% if context.r.count > 0 %}
-    <tr class="t_body4">
+    <tr class="req_body4">
       <th scope="col">Book Title</th>
+      <th scope="col">Request Date</th>
+      <th scope="col">Lent Date</th>
       <th scope="col">Return Date</th>
-      <th scope="col">Charge paid</th>
+      <th scope="col" colspan="2">Charge paid</th>
     </tr>
     {% endif %}
   </thead>
-  <tbody class="t_body4">
+  <tbody class="req_body4">
     {% for book in context.r %}
     <tr>
-      <td><a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a></td>
+      <td>
+        <a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a>
+      </td>
+      <td>{{ book.request_date }}</td>
+      <td>{{ book.lent_date }}</td>
       <td>{{ book.return_date }}</td>
-      <td>{{ book.charge }}</td>
+      <td colspan="2">{{ book.charge }}</td>
     </tr>
     {% endfor %}
   </tbody>
   <thead>
     <tr class="t_head5" onclick="show_data(5);">
-      <th colspan="3">Rejected book requests ({{ context.n.count }})</th>
+      <th colspan="6">Book requests - Rejected
+        <span class="badge badge-primary badge-pill">{{ context.n.count }}</span>
+      </th>
     </tr>
     {% if context.n.count > 0 %}
-    <tr class="t_body5">
+    <tr class="req_body5">
       <th scope="col">Book Title</th>
-      <th scope="col">Date</th>
-      <th></th>
+      <th scope="col">Request Date</th>
+      <th scope="col">Rejected Date</th>
+      <th colspan="3"></th>
     </tr>
     {% endif %}
   </thead>
-  <tbody class="t_body5">
+  <tbody class="req_body5">
     {% for book in context.n %}
     <tr>
-      <td><a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a></td>
+      <td>
+        <a href="{{ book.book.get_absolute_url  }}">{{ book.book.title }}</a>
+      </td>
+      <td>{{ book.request_date }}</td>
       <td>{{ book.close_date }}</td>
-      <td></td>
+      <td colspan="3"></td>
     </tr>
     {% endfor %}
   </tbody>
